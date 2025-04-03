@@ -16,7 +16,7 @@ if (!isset($_SESSION)) {
     <script src="https://kit.fontawesome.com/7be85ed243.js"></script>
 </head>
 <body class="login-body">
-    <?php include '../includes/navbar.php'; ?>
+    
     
     <section class="login">
         <div class="login-box">
@@ -47,7 +47,6 @@ if (!isset($_SESSION)) {
         </div>
     </section>
     
-    <?php include '../includes/footer.php'; ?>
 </body>
 </html>
 

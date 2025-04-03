@@ -22,7 +22,7 @@ body {
 .lajmi-each {
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;  /* Removed shadow */
     overflow: hidden;
     transition: transform 0.3s ease;
     min-height: 450px;
@@ -31,7 +31,8 @@ body {
 }
 
 .lajmi-each:hover {
-    transform: translateY(-5px);
+    transform: none;  /* Removed hover effect */
+    box-shadow: none;  /* Removed hover shadow */
 }
 
 .lajmi-image {

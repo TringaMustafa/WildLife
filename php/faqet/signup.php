@@ -55,7 +55,7 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body class="signup-body">
-    <?php include '../includes/navbar.php'; ?>
+    
     
     <section class="signup">
         <div class="signup-box">
@@ -95,7 +95,7 @@ if (isset($_POST['submit'])) {
        
     </section>
     
-    <?php include '../includes/footer.php'; ?>
+    
     <script src="../../js/regex.js"></script>
 </body>
 </html>

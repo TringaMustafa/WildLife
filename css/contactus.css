@@ -43,9 +43,8 @@ input, textarea{
 	background-color: #FFFFFF;
 	color: #333;
 }
-textarea:focus:focus{
+textarea:focus{
 	outline: none;
-	box-shadow: 0 0 8px #bbb;
 }
 button{
 	display: inline-block;

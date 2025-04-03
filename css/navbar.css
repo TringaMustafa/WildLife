@@ -5,10 +5,10 @@
     width: 100%;
     height: 100px;
     background-color: white;
-    box-shadow: 10px 5px 5px rgba(0, 0, 0, 0.5)
+    box-shadow: none;
 }
 .navbar-other {
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3)
+    box-shadow: none;
 }
 .navbar ul {
     display: flex;
