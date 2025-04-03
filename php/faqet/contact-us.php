@@ -56,6 +56,8 @@ if (!isset($_SESSION)) {
         </div>
     </section>
     
-    <?php include '../includes/footer.php'; ?>
+    <footer class="footer">
+        <?php include '../includes/footer.php'; ?>
+    </footer>
 </body>
 </html>

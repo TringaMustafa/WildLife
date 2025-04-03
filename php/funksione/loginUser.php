@@ -13,26 +13,33 @@ if(isset($_POST['login'])) {
     $user = $modeli->getUserByNrLeternjoftimit();
 
     if($user) {
-        if($password === $user['passwordi']) { // Changed to direct comparison if passwords aren't hashed
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['emri'];
-            $_SESSION['roli'] = $user['roli']; // Get role from database instead of checkbox
+        if($password === $user['passwordi']) {
+            // Store complete user data in session
+            $_SESSION = [
+                'logged_in' => true,
+                'user_id' => $user['id'],
+                'nrleternjoftimit' => $user['nrleternjoftimit'],
+                'emri' => $user['emri'],
+                'mbiemri' => $user['mbiemri'],
+                'adresa' => $user['adresa'] ?? '',
+                'numri' => $user['numri'] ?? '',
+                'roli' => $user['roli'] ?? 'user',
+                'aksesi' => $user['aksesi'] ?? 0
+            ];
 
-            if($_SESSION['roli'] === 'admin') {
+            if($user['roli'] === 'admin') {
                 header("Location: ../admin/dashboard.php");
             } else {
-                header("Location: ../faqet/index.php");
+                header("Location: ../faqet/profile.php");
             }
             exit();
         } else {
             $_SESSION['PasswordGabim'] = true;
-            header("Location: ../faqet/login.php");
-            exit();
         }
     } else {
         $_SESSION['nrleternjoftimitGabim'] = true;
-        header("Location: ../faqet/login.php");
-        exit();
     }
+    header("Location: ../faqet/login.php");
+    exit();
 }
 ?>

@@ -109,16 +109,17 @@ public function fshijPerdoruesin($id) {
 
 //Metoda per insertim Dhenave
 public function insertoDhenat(){
-try{
-    $sql = "INSERT INTO `users` (`nrleternjoftimit`,`emri`,`mbiemri`,`numri`,`adresa`,`passwordi`,`roli`) VALUES(?,?,?,?,?,?,?)";
-    $stm = $this->dbcon->prepare($sql);
-    $stm->execute([$this->nrleternjoftimit, $this->emri, $this->mbiemri,$this->numri, $this->adresa, $this->passwordi, $this->roli]);
-    
-    $_SESSION['regMeSukses'] = true;
-}
+    try{
+        $sql = "INSERT INTO `users` (`nrleternjoftimit`,`emri`,`mbiemri`,`numri`,`adresa`,`passwordi`,`roli`) VALUES(?,?,?,?,?,?,?)";
+        $stm = $this->dbcon->prepare($sql);
+        $stm->execute([$this->nrleternjoftimit, $this->emri, $this->mbiemri,$this->numri, $this->adresa, $this->passwordi, $this->roli]);
+        
+        $_SESSION['regMeSukses'] = true;
+        return true;
+    }
     catch(Exception $e){
-    return $e->getMessage();
-        }
+        return false;
+    }
 }
 
     
@@ -199,13 +200,71 @@ public function updateUser($id, $emri, $mbiemri, $aksesi) {
     }
 }
 
-public function getUserByNrLeternjoftimit() {
+public function getUserByNrLeternjoftimit($nrleternjoftimit = null) {
     try {
+        // Use provided number or class property
+        $nrToUse = $nrleternjoftimit ?? $this->nrleternjoftimit;
+        
+        if (empty($nrToUse)) {
+            error_log("Empty nrleternjoftimit");
+            return false;
+        }
+
         $sql = "SELECT * FROM users WHERE nrleternjoftimit = ?";
         $stmt = $this->dbcon->prepare($sql);
-        $stmt->execute([$this->nrleternjoftimit]);
+        $stmt->execute([$nrToUse]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            error_log("No user found with nrleternjoftimit: " . $nrToUse);
+            return false;
+        }
+
+        return $result;
+    } catch (Exception $e) {
+        error_log("Database error in getUserByNrLeternjoftimit: " . $e->getMessage());
+        return false;
+    }
+}
+
+public function updateUserProfile($nrleternjoftimit, $emri, $mbiemri, $adresa, $numri) {
+    try {
+        // Validate inputs
+        if (empty($emri) || empty($mbiemri)) {
+            return false;
+        }
+        
+        // Clean inputs
+        $emri = trim($emri);
+        $mbiemri = trim($mbiemri);
+        $adresa = trim($adresa);
+        $numri = trim($numri);
+        
+        $sql = "UPDATE users SET emri = ?, mbiemri = ?, adresa = ?, numri = ? WHERE nrleternjoftimit = ?";
+        $stmt = $this->dbcon->prepare($sql);
+        return $stmt->execute([$emri, $mbiemri, $adresa, $numri, $nrleternjoftimit]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+public function kontrolloNrTelefonit($numri) {
+    try {
+        $sql = "SELECT COUNT(*) FROM users WHERE numri = ?";
+        $stmt = $this->dbcon->prepare($sql);
+        $stmt->execute([$numri]);
+        return $stmt->fetchColumn() > 0;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+public function kontrolloNrLeternjoftimit($nrleternjoftimit) {
+    try {
+        $sql = "SELECT COUNT(*) FROM users WHERE nrleternjoftimit = ?";
+        $stmt = $this->dbcon->prepare($sql);
+        $stmt->execute([$nrleternjoftimit]);
+        return $stmt->fetchColumn() > 0;
     } catch (Exception $e) {
         return false;
     }

@@ -34,6 +34,7 @@ if (!isset($_SESSION['aksesi'])) {
                 } else {
                     echo '
                     
+                     <li><a href="../faqet/index.php"> HOME </a></li>
                      <li><a href="../faqet/wht.php"> WHAT WE DO </a></li>
                      <li><a href="../faqet/news.php"> NEWS </a></li>
                      <li><a href="../faqet/contact-us.php"> CONTACT US </a></li><li class="nav-item">
@@ -44,23 +45,19 @@ if (!isset($_SESSION['aksesi'])) {
                 
                 if (isset($_SESSION['emri'])) {
                     if ($_SESSION['aksesi'] != 0) {
-                        echo
-                            '
+                        echo '
                             <li><a href="../faqet/wht.php"> WHAT WE DO </a></li>
                             <li><a href="../faqet/news.php"> NEWS </a></li>
-                            <li><a href="../faqet/contact-us.php"> CONTACT US </a></li><li class="nav-item">
-                            <a href="../funksione/logout.php">LOG OUT</a>
-                        </li>';
+                            <li><a href="../faqet/contact-us.php"> CONTACT US </a></li>
+                            <li><a href="../faqet/profile.php"><i class="fa-solid fa-user-circle"></i> ' . htmlspecialchars($_SESSION['emri']) . '</a></li>
+                            <li><a href="../funksione/logout.php">LOG OUT</a></li>';
                     } else {
                         echo '    
-                        
-                        <li><a href="../funksione/logout.php">LOG OUT</a></li>';
+                            <li><a href="../faqet/profile.php"><i class="fa-solid fa-user-circle"></i> ' . htmlspecialchars($_SESSION['emri']) . '</a></li>
+                            <li><a href="../funksione/logout.php">LOG OUT</a></li>';
                     }
                 } else {
-                    echo
-                        '
-                        <li><a href="login.php"> <i class="fa-solid fa-user"></i> </a></li>
-                        ';
+                    echo '<li><a href="login.php"><i class="fa-solid fa-user"></i> LOGIN</a></li>';
                 }
                 ?>
                  

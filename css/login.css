@@ -14,10 +14,10 @@ body {
 }
 
 .login {
+    min-height: calc(100vh - 160px); /* Account for navbar and footer */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
 }
 
 .login-box {

@@ -64,7 +64,7 @@ button:hover{
     background-color: #FFD700;
 }
 .contact-info{
-	text-align: left;
+	text-algn: left;
 }
 .contact-info h3{
 	font-size: 24px;
@@ -92,6 +92,3 @@ button:hover{
 		grid-template-columns:1fr;
 	}
 }
-
-
-

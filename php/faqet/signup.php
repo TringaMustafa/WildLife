@@ -6,28 +6,38 @@ if (!isset($_SESSION)) {
 require('../CRUD/Modeli.php');
 
 if (isset($_POST['submit'])) {
-  $Modeli = new Modeli();
+    $Modeli = new Modeli();
+    
+    // Check password requirements
+    $password = $_POST['passwordi'];
+    if (strlen($password) < 6 || !preg_match('/\d/', $password)) {
+        $_SESSION['error'] = "Fjalëkalimi duhet të ketë të paktën 6 karaktere dhe një numër!";
+    } 
+    // Check for duplicate ID
+    else if ($Modeli->kontrolloNrLeternjoftimit($_POST['nrleternjoftimit'])) {
+        $_SESSION['error'] = "Ky numër i letërnjoftimit është duke u përdorur!";
+    }
+    // Check for duplicate phone
+    else if (!empty($_POST['numri']) && $Modeli->kontrolloNrTelefonit($_POST['numri'])) {
+        $_SESSION['error'] = "Ky numër telefoni është duke u përdorur!";
+    }
+    else {
+        $Modeli->setNrleternjoftimit($_POST['nrleternjoftimit']);
+        $Modeli->setEmri($_POST['emri']);
+        $Modeli->setMbiemri($_POST['mbiemri']);
+        $Modeli->setNumri($_POST['numri']);
+        $Modeli->setAdresa($_POST['adresa']);
+        $Modeli->setPasswordi($_POST['passwordi']);
 
-  $Modeli->setNrleternjoftimit($_POST['nrleternjoftimit']);
+        $roli = isset($_POST['isAdmin']) ? 'admin' : 'user';
+        $Modeli->setRoli($roli);
 
-  $kontrollo = $Modeli->kontrollo();
-  if ($kontrollo==true) {
-    $_SESSION['nrleternjoftimitEkziston'] = true;
-    session_destroy();
-  } else {
-    $Modeli->setNrleternjoftimit($_POST['nrleternjoftimit']);
-    $Modeli->setEmri($_POST['emri']);
-    $Modeli->setMbiemri($_POST['mbiemri']);
-    $Modeli->setNumri($_POST['numri']);
-    $Modeli->setAdresa($_POST['adresa']);
-    $Modeli->setPasswordi($_POST['passwordi']);
-
-    $roli = isset($_POST['isAdmin']) ? 'admin' : 'user';
-    $Modeli->setRoli($roli);
-
-    $Modeli->insertoDhenat();
-    session_destroy();
-  }
+        if($Modeli->insertoDhenat()) {
+            $_SESSION['regMeSukses'] = true;
+            header("Location: login.php");
+            exit();
+        }
+    }
 }
 
 ?>
@@ -45,9 +55,15 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body class="signup-body">
+    <?php include '../includes/navbar.php'; ?>
+    
     <section class="signup">
         <div class="signup-box">
             <div class="signup-box-inside">
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="error-message"><?php echo $_SESSION['error']; ?></div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
             <form id="signupform" name="SignUpForm" action='' method="POST">
               <?php
             if (isset($_SESSION['regMeSukses'])) {
@@ -78,6 +94,8 @@ if (isset($_POST['submit'])) {
                 </form>
        
     </section>
+    
+    <?php include '../includes/footer.php'; ?>
     <script src="../../js/regex.js"></script>
 </body>
 </html>
