@@ -42,13 +42,12 @@ CREATE TABLE lajmi (
 );
 
 -- Krijo tabelën për mesazhet e kontaktit
-CREATE TABLE kontaktet (
-    kontaktID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS kontaktet (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     emri VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    subjekti VARCHAR(200),
     mesazhi TEXT NOT NULL,
-    data_dergimit TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    data_krijimit TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Krijo indekset
@@ -72,18 +71,18 @@ INSERT INTO lajmi (titulli, pershkrimi, fotolajmit, contentfoto, content, katego
 VALUES 
 ('Rare Black Rhino Born in Tanzania', 
 'A new hope for the critically endangered black rhino species as a healthy calf is born in Serengeti National Park.',
-'rhino_baby.jpg', 'rhino_full.jpg',
+'rhino_baby.jpg', 'rhino_baby.jpg',
 'Conservation efforts in Tanzania have reached a significant milestone with the birth of a black rhino calf in Serengeti National Park. This marks the first successful birth in the region in over two decades...', 
 1, 1),
 
 ('Lions Return to Mozambique''s Marromeu Reserve',
 'After decades of absence, lions have been spotted again in Marromeu Reserve, signaling successful conservation efforts.',
-'lion_return.jpg', 'lion_pride.jpg',
+'lion_return.jpg', 'lion_return.jpg',
 'In a remarkable turn of events, a pride of lions has established territory in Mozambique''s Marromeu Reserve. Conservationists report multiple sightings of the pride, including cubs...', 
 1, 1),
 
 ('New Elephant Corridor Established in Kenya',
 'A crucial wildlife corridor connecting two major elephant habitats has been secured through community partnership.',
-'elephant_corridor.jpg', 'elephant_herd.jpg',
+'elephant_corridor.jpg', 'elephant_corridor.jpg',
 'Local communities and conservation groups have successfully established a protected corridor allowing elephants to safely migrate between key habitats. This achievement represents...', 
 2, 1);

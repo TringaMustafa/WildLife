@@ -16,23 +16,34 @@ if (!isset($_SESSION)) {
 <body>
     <?php include '../includes/navbar.php'; ?>
     
+    <?php
+    if (isset($_SESSION['message_sent'])) {
+        echo "<script>alert('Message sent successfully!');</script>";
+        unset($_SESSION['message_sent']);
+    }
+    if (isset($_SESSION['message_error'])) {
+        echo "<script>alert('Error sending message. Please try again.');</script>";
+        unset($_SESSION['message_error']);
+    }
+    ?>
+    
     <section class="contact">
         <div class="container">
             <h2>Contact Us</h2>
             <div class="contact-wrapper">
                 <div class="contact-form">
                     <h3>Send us a message</h3>
-                    <form>
+                    <form action="../funksione/process_contact.php" method="POST">
                         <div class="form-group">
-                            <input type="text" name="name" placeholder="Your Name">
+                            <input type="text" name="name" placeholder="Your Name" required>
                         </div>
                         <div class="form-group">
-                            <input type="email" name="email" placeholder="Your Email">
+                            <input type="email" name="email" placeholder="Your Email" required>
                         </div>
                         <div class="form-group">
-                            <textarea name="message" placeholder="Your message"></textarea>
+                            <textarea name="message" placeholder="Your message" required></textarea>
                         </div>
-                        <button type="submit">Send Message</button>
+                        <button type="submit" name="submit">Send Message</button>
                     </form>
                 </div>
                 <div class="contact-info">
