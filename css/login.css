@@ -60,6 +60,15 @@ h2 {
     background-color: #4cae4c;
 }
 
+.error-message {
+    color: #ff0000;
+    background-color: #ffe6e6;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
 .reg {
     margin-top: 20px;
 }

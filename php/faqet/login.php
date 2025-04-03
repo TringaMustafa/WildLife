@@ -20,29 +20,27 @@ if (!isset($_SESSION)) {
         <div class="login-box">
             <div class="login-box-inside">
                 <h2>Log In</h2>
-                <form name="LoginForm" onsubmit="validimiLogIn();" action='../funksione/loginUser.php' method="POST">
-      <?php
-      if (isset($_SESSION['PasswordGabim'])) {
-        echo '
-                  <script>alert("Passwordi eshte gabim!");</script>
-            ';
-      }
-      if (isset($_SESSION['nrleternjoftimitGabim'])) {
-        echo '
-        <script>alert("Passwordi eshte gabim!");</script>
-            ';
-      }
-      ?>
-      <input type="text" name="nrleternjoftimit" class="field" placeholder="Your Id">
-      <input type="password" name="passwordi" class="field" placeholder="Your Password">
-      <div class="reg">
-        <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
-        <input class="button" onclick="validimiLogIn();" type="submit" name="login">
-      </div>
-      
+                <form name="LoginForm" onsubmit="return validimiLogIn();" action='../funksione/loginUser.php' method="POST">
+                <?php
+                if (isset($_SESSION['PasswordGabim'])) {
+                    echo '<div class="error-message">Passwordi është gabim!</div>';
+                }
+                if (isset($_SESSION['nrleternjoftimitGabim'])) {
+                    echo '<div class="error-message">Ky përdorues nuk ekziston!</div>';
+                }
+                ?>
+                <input type="text" name="nrleternjoftimit" class="field" placeholder="Your Id" required>
+                <input type="password" name="passwordi" class="field" placeholder="Your Password" required>
+                <div class="role-selector">
+                    <input type="checkbox" name="isAdmin" id="isAdmin">
+                    <label for="isAdmin">Login as Admin</label>
+                </div>
+                <div class="reg">
+                    <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
+                    <input class="button" onclick="validimiLogIn();" type="submit" name="login">
+                </div>
                 
-                
-            </form>
+                </form>
             </div>
         </div>
     </section>
@@ -50,6 +48,26 @@ if (!isset($_SESSION)) {
 </html>
 
 <?php
+if(isset($_POST['login'])) {
+    $username = $_POST['nrleternjoftimit'];
+    $password = $_POST['passwordi'];
+    
+    // Example validation logic
+    $userExists = true; // Replace with actual validation logic
+    
+    if($userExists) {
+        $_SESSION['username'] = $username;
+        $_SESSION['roli'] = isset($_POST['isAdmin']) ? 'admin' : 'user';
+        
+        if($_SESSION['roli'] === 'admin') {
+            header("Location: ../admin/dashboard.php");
+        } else {
+            header("Location: index.php");
+        }
+        exit();
+    }
+}
+
 unset($_SESSION['nrleternjoftimitGabim']);
 unset($_SESSION['PasswordGabim']);
 ?>

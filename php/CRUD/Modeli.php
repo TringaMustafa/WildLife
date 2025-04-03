@@ -12,6 +12,7 @@ private $mbiemri;
 private $aksesi;
 private $passwordi;
 private $numri;
+private $roli;  // Add this property
 private $dbConn;
 public function __construct($id='', $nrleternjoftimit='', $emri='', $mbiemri='', $adresa='' ,$aksesi='', $passwordi='',$numri='', $dbConn='') {
     $this->id = $id;
@@ -22,6 +23,7 @@ public function __construct($id='', $nrleternjoftimit='', $emri='', $mbiemri='',
     $this->aksesi=$aksesi;
     $this->passwordi=$passwordi;
     $this->numri=$numri;
+    $this->roli = 'user'; // Default role
     $this->dbcon = $this->connDB();
 }
 //Seters and geters
@@ -85,6 +87,14 @@ public function setNumri($numri){
     $this->numri=$numri;
 }
 
+public function getRoli() {
+    return $this->roli;
+}
+
+public function setRoli($roli) {
+    $this->roli = $roli;
+}
+
 public function fshijPerdoruesin($id) {
     try {
         $sql = "DELETE FROM users WHERE id = :id";
@@ -100,9 +110,9 @@ public function fshijPerdoruesin($id) {
 //Metoda per insertim Dhenave
 public function insertoDhenat(){
 try{
-    $sql = "INSERT INTO `users` (`nrleternjoftimit`,`emri`,`mbiemri`,`numri`,`adresa`,`passwordi`) VALUES(?,?,?,?,?,?)";
+    $sql = "INSERT INTO `users` (`nrleternjoftimit`,`emri`,`mbiemri`,`numri`,`adresa`,`passwordi`,`roli`) VALUES(?,?,?,?,?,?,?)";
     $stm = $this->dbcon->prepare($sql);
-    $stm->execute([$this->nrleternjoftimit, $this->emri, $this->mbiemri,$this->numri, $this->adresa, $this->passwordi]);
+    $stm->execute([$this->nrleternjoftimit, $this->emri, $this->mbiemri,$this->numri, $this->adresa, $this->passwordi, $this->roli]);
     
     $_SESSION['regMeSukses'] = true;
 }
@@ -189,8 +199,17 @@ public function updateUser($id, $emri, $mbiemri, $aksesi) {
     }
 }
 
-
-
+public function getUserByNrLeternjoftimit() {
+    try {
+        $sql = "SELECT * FROM users WHERE nrleternjoftimit = ?";
+        $stmt = $this->dbcon->prepare($sql);
+        $stmt->execute([$this->nrleternjoftimit]);
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        return false;
+    }
+}
 
 }
 ?>

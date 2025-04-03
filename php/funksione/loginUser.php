@@ -1,36 +1,38 @@
 <?php
+session_start();
 require_once('../CRUD/Modeli.php');
-if (!isset($_SESSION)) {
-    session_start();
-}
 
-if (isset($_POST['login'])) {
-    $Modeli = new Modeli();
-    $Modeli->setNrleternjoftimit($_POST['nrleternjoftimit']);
-    $kontrollo = $Modeli->kontrollo();
+if(isset($_POST['login'])) {
+    $modeli = new Modeli();
+    $nrleternjoftimit = $_POST['nrleternjoftimit'];
+    $password = $_POST['passwordi'];
 
+    $modeli->setNrleternjoftimit($nrleternjoftimit);
+    $modeli->setPasswordi($password);
 
-    if ($kontrollo == true) {
-        $Modeli->setPasswordi($_POST['passwordi']);
-        $kontrolloLlogarin = $Modeli->kontrolloLlogarin();
+    $user = $modeli->getUserByNrLeternjoftimit();
 
-        if ($kontrolloLlogarin == true) {
-            $_SESSION['aksesi'] = $kontrolloLlogarin['aksesi'];
-            $_SESSION['id'] = $kontrolloLlogarin['id'];
-            $_SESSION['emri'] = $kontrolloLlogarin['emri'];
-            $_SESSION['mbiemri'] = $kontrolloLlogarin['mbiemri'];
-            echo "<script>document.location='../faqet/index.php'</script>";
+    if($user) {
+        if($password === $user['passwordi']) { // Changed to direct comparison if passwords aren't hashed
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['emri'];
+            $_SESSION['roli'] = $user['roli']; // Get role from database instead of checkbox
+
+            if($_SESSION['roli'] === 'admin') {
+                header("Location: ../admin/dashboard.php");
+            } else {
+                header("Location: ../faqet/index.php");
+            }
+            exit();
         } else {
             $_SESSION['PasswordGabim'] = true;
-            echo "<script>
-            document.location='../faqet/login.php';
-            </script>";
+            header("Location: ../faqet/login.php");
+            exit();
         }
     } else {
         $_SESSION['nrleternjoftimitGabim'] = true;
-        echo "<script>
-        document.location='../faqet/login.php';
-        </script>";
+        header("Location: ../faqet/login.php");
+        exit();
     }
 }
 ?>

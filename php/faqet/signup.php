@@ -22,13 +22,13 @@ if (isset($_POST['submit'])) {
     $Modeli->setAdresa($_POST['adresa']);
     $Modeli->setPasswordi($_POST['passwordi']);
 
+    $roli = isset($_POST['isAdmin']) ? 'admin' : 'user';
+    $Modeli->setRoli($roli);
+
     $Modeli->insertoDhenat();
     session_destroy();
-    
-    
   }
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -68,8 +68,10 @@ if (isset($_POST['submit'])) {
                 <input name="numri" id="numri" type="number" class="field" placeholder="Your Number">
                 <input name="adresa" id="adress" type="text" class="field" placeholder="Your Address">
                 <input name="passwordi" id="passwordi" type="password"  class="field" placeholder="Password">
-                
-                
+                <div class="role-selector">
+                    <input type="checkbox" name="isAdmin" id="isAdmin">
+                    <label for="isAdmin">Register as Admin</label>
+                </div>
                 
                 <input type="submit" onclick="Valido()" name="submit"class="signup-button"value="Sign Up">
                 <a href="login.php">Log In.</a>

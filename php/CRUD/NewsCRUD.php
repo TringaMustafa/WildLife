@@ -88,20 +88,51 @@ Class NewsCRUD extends dbcon{
         $this->datainsertimit = $datainsertimit;
       }
 
+      private function ensureDirectoryExists($path) {
+          if (!file_exists($path)) {
+              mkdir($path, 0777, true);
+          }
+      }
 
       //Metoda per regjistrimin e lajmeve ne databaze
-      public function InsertLajmin()
-    {
+      public function InsertLajmin() {
         try {
-            $this->barteFotonNeFolder();
-            $this->barteFotonNeFolderContent();
+            // Create directories if they don't exist
+            $this->ensureDirectoryExists('../../img/lajmet/index');
+            $this->ensureDirectoryExists('../../img/lajmet/content');
 
-            $sql = "INSERT INTO `lajmi`(`titulli`, `pershkrimi`, `fotolajmit`, `contentfoto`, `content`,`kategorialajmit`) VALUES (?,?,?,?,?,?)";
+            // Sanitize file names and validate file types
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            
+            // Handle lajmi photo
+            $lajmiPhoto = $_SESSION['fotolajmit'];
+            if (!in_array($lajmiPhoto['type'], $allowedTypes)) {
+                $_SESSION['fileNukSuportohet'] = true;
+                return false;
+            }
+            
+            // Handle content photo
+            $contentPhoto = $_SESSION['contentfoto'];
+            if (!in_array($contentPhoto['type'], $allowedTypes)) {
+                $_SESSION['fileNukSuportohet'] = true;
+                return false;
+            }
+
+            // Generate safe filenames
+            $lajmiPhotoName = uniqid() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "", $lajmiPhoto['name']);
+            $contentPhotoName = uniqid() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "", $contentPhoto['name']);
+
+            // Move files
+            move_uploaded_file($lajmiPhoto['tmp_name'], "../../img/lajmet/" . $lajmiPhotoName);
+            move_uploaded_file($contentPhoto['tmp_name'], "../../img/lajmet/content/" . $contentPhotoName);
+
+            $sql = "INSERT INTO lajmet (titulli, pershkrimi, content, fotolajmit, contentfoto, kategorialajmit) VALUES (?, ?, ?, ?, ?, ?)";
             $stm = $this->dbcon->prepare($sql);
-            $stm->execute([$this->titulli, $this->pershkrimi, $this->fotolajmit, $this->contentfoto, $this->content, $this->kategorialajmit]);
-
+            $stm->execute([$this->titulli, $this->pershkrimi, $this->content, $lajmiPhotoName, $contentPhotoName, $this->kategorialajmit]);
+            
             $_SESSION['LajmiUinsertua'] = true;
-        } catch (Exception $e) {
+            return true;
+        } catch(Exception $e) {
             return $e->getMessage();
         }
     }
@@ -201,8 +232,17 @@ Class NewsCRUD extends dbcon{
 public function fshijLajminSipasID(){
         try {
             $lajmi = $this->shfaqLajminSipasID();
-            unlink('../../img/lajmet/index/' . $lajmi['fotolajmit']);
-            unlink('../../img/lajmet/content/' . $lajmi['contentfoto']);
+            
+            $indexPath = '../../img/lajmet/index/' . $lajmi['fotolajmit'];
+            $contentPath = '../../img/lajmet/content/' . $lajmi['contentfoto'];
+            
+            // Safely delete files if they exist
+            if (file_exists($indexPath)) {
+                unlink($indexPath);
+            }
+            if (file_exists($contentPath)) {
+                unlink($contentPath);
+            }
 
             $sql = "DELETE FROM lajmi WHERE lajmiID = ?";
             $stm = $this->dbcon->prepare($sql);
