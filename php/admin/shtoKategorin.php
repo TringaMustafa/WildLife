@@ -1,109 +1,101 @@
 <?php
 require_once('../adminFunksione/kontrolloAksesin.php');
-require_once('../CRUD/Modeli.php');
+require_once('../CRUD/kategoriaCRUD.php');
 
-$Modeli = new Modeli();
+$kategoria = new kategoriaCRUD();
 
-// Handle Update Request
-if (isset($_GET['updateId'])) {
-    // Update operation
-    $id = $_GET['updateId'];
-    $emri = $_GET['emri'];
-    $mbiemri = $_GET['mbiemri'];
-    $aksesi = $_GET['aksesi'];
-
-    if ($Modeli->updateUser($id, $emri, $mbiemri, $aksesi)) {
-        $_SESSION['aksesiUPerditesua'] = true;
-    } else {
-        $_SESSION['error'] = "Unable to update user.";
-    }
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
+if (isset($_POST['shtoKategorin'])) {
+    $_SESSION['emriKategorise'] = $_POST['emriKategoris'];
+    $_SESSION['pershkrimiKategorise'] = $_POST['pershkrimiKategoris'];
+    $kategoria->insertoKategorinLajmit();
 }
 
-// Handle Delete Request
-if (isset($_GET['deleteUserID'])) {
-    if ($Modeli->fshijPerdoruesin($_GET['deleteUserID'])) {
-        $_SESSION['userDeleted'] = true;
-    } else {
-        $_SESSION['error'] = "Unable to delete user.";
-    }
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perdoruesit</title>
+    <title>Menaxho Kategorite</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .button {
+            background: rgb(184,29,29);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .kategori-list {
+            margin-top: 30px;
+        }
+        .kategori-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div class="containerDashboardP">
-        <?php
-        if (isset($_SESSION['aksesiUPerditesua'])) {
-            echo '<div class="mesazhiSuksesStyle"><p>Llogaria u ndryshua!</p></div>';
-            unset($_SESSION['aksesiUPerditesua']);
-        }
-        if (isset($_SESSION['userDeleted'])) {
-            echo '<div class="mesazhiSuksesStyle"><p>Përdoruesi u fshi me sukses!</p></div>';
-            unset($_SESSION['userDeleted']);
-        }
-        if (isset($_SESSION['error'])) {
-            echo '<div class="mesazhiErrorStyle"><p>' . $_SESSION['error'] . '</p></div>';
-            unset($_SESSION['error']);
-        }
-        ?>
-        <h1 class="adminPageH1">Lista e Perdoruesve</h1>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Emri</th>
-                <th>Mbiemri</th>
-                <th>Aksesi</th>
-                <th>Funksione</th>
-            </tr>
+    <div class="container">
+        <a href="dashboard.php" class="back-button">Back to Dashboard</a>
+        <h1>Menaxho Kategorite</h1>
+        
+        <form method="POST" action="">
+            <div class="form-group">
+                <label>Emri i Kategorise:</label>
+                <input type="text" name="emriKategoris" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label>Pershkrimi i Kategorise:</label>
+                <textarea name="pershkrimiKategoris" class="form-input" rows="4" required 
+                    placeholder="Pershkruani per çka perdoret kjo kategori dhe cilat lloje te lajmeve i perkasin..."></textarea>
+            </div>
+            <button type="submit" name="shtoKategorin" class="button">Shto Kategorine</button>
+        </form>
+
+        <div class="kategori-list">
+            <h2>Kategorite Ekzistuese</h2>
             <?php
-            $perdoruesit = $Modeli->shfaqTeGjithePerdoruesit();
-            foreach ($perdoruesit as $perdoruesi) {
-                echo "<tr>
-                    <td>{$perdoruesi['id']}</td>
-                    <td><input type='text' id='emri_{$perdoruesi['id']}' value='{$perdoruesi['emri']}'></td>
-                    <td><input type='text' id='mbiemri_{$perdoruesi['id']}' value='{$perdoruesi['mbiemri']}'></td>
-                    <td><input type='number' id='aksesi_{$perdoruesi['id']}' min='0' max='2' value='{$perdoruesi['aksesi']}'></td>
-                    <td>
-                        <button onclick=\"ndryshoTeDhenat('{$perdoruesi['id']}');\">Edito</button>
-                        <button onclick=\"fshijPerdoruesin('{$perdoruesi['id']}');\">Fshij</button>
-                    </td>
-                </tr>";
+            $kategorite = $kategoria->shfaqKategorin();
+            if ($kategorite) {
+                foreach ($kategorite as $kat) {
+                    echo '<div class="kategori-item">
+                            <h3>' . htmlspecialchars($kat['emriKategoris']) . '</h3>
+                            <p>' . htmlspecialchars($kat['pershkrimiKategoris']) . '</p>
+                          </div>';
+                }
+            } else {
+                echo '<p>Nuk ka kategori te regjistruara.</p>';
             }
             ?>
-        </table>
+        </div>
     </div>
-
-    <a href="dashboard.php">Go Back to Dashboard</a>
-
-    <script>
-        function ndryshoTeDhenat(idUser) {
-            var emri = encodeURIComponent(document.getElementById("emri_" + idUser).value);
-            var mbiemri = encodeURIComponent(document.getElementById("mbiemri_" + idUser).value);
-            var aksesi = encodeURIComponent(document.getElementById("aksesi_" + idUser).value);
-            if (emri === "" || mbiemri === "") {
-                alert("Emri dhe mbiemri nuk duhet të jenë të zbrazët!");
-            } else {
-                window.location.href = `?updateId=${idUser}&emri=${emri}&mbiemri=${mbiemri}&aksesi=${aksesi}`;
-            }
-        }
-
-        function fshijPerdoruesin(idUser) {
-            var confirmation = confirm("A jeni i sigurt që dëshironi të fshini këtë përdorues?");
-            if (confirmation) {
-                window.location.href = `?deleteUserID=${idUser}`;
-            }
-        }
-    </script>
 </body>
 </html>

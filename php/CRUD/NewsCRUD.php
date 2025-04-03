@@ -101,41 +101,29 @@ Class NewsCRUD extends dbcon{
             $this->ensureDirectoryExists('../../img/lajmet/index');
             $this->ensureDirectoryExists('../../img/lajmet/content');
 
-            // Sanitize file names and validate file types
-            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-            
-            // Handle lajmi photo
+            // Handle file uploads
             $lajmiPhoto = $_SESSION['fotolajmit'];
-            $lajmiExt = strtolower(pathinfo($lajmiPhoto['name'], PATHINFO_EXTENSION));
-            
-            // Handle content photo
             $contentPhoto = $_SESSION['contentfoto'];
-            $contentExt = strtolower(pathinfo($contentPhoto['name'], PATHINFO_EXTENSION));
-            
-            // Validate file types and extensions
-            if (!in_array($lajmiPhoto['type'], $allowedTypes) || 
-                !in_array($contentPhoto['type'], $allowedTypes) ||
-                !in_array($lajmiExt, $allowedExtensions) || 
-                !in_array($contentExt, $allowedExtensions)) {
-                $_SESSION['fileNukSuportohet'] = true;
-                return false;
-            }
 
             // Generate safe filenames
             $lajmiPhotoName = uniqid() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "", $lajmiPhoto['name']);
             $contentPhotoName = uniqid() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "", $contentPhoto['name']);
 
             // Move files with proper paths
-            if (!move_uploaded_file($lajmiPhoto['tmp_name'], "../../img/lajmet/index/" . $lajmiPhotoName) ||
-                !move_uploaded_file($contentPhoto['tmp_name'], "../../img/lajmet/content/" . $contentPhotoName)) {
-                $_SESSION['problemNeBartje'] = true;
-                return false;
-            }
+            move_uploaded_file($lajmiPhoto['tmp_name'], "../../img/lajmet/index/" . $lajmiPhotoName);
+            move_uploaded_file($contentPhoto['tmp_name'], "../../img/lajmet/content/" . $contentPhotoName);
 
-            $sql = "INSERT INTO lajmi (titulli, pershkrimi, content, fotolajmit, contentfoto, kategorialajmit) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO lajmi (titulli, pershkrimi, content, fotolajmit, contentfoto, kategorialajmit, datainsertimit) 
+                    VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
             $stm = $this->dbcon->prepare($sql);
-            $stm->execute([$this->titulli, $this->pershkrimi, $this->content, $lajmiPhotoName, $contentPhotoName, $this->kategorialajmit]);
+            $stm->execute([
+                $this->titulli, 
+                $this->pershkrimi, 
+                $this->content,
+                $lajmiPhotoName,
+                $contentPhotoName,
+                $this->kategorialajmit
+            ]);
             
             $_SESSION['LajmiUinsertua'] = true;
             return true;

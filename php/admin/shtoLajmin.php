@@ -10,24 +10,26 @@ if (!isset($_SESSION)) {
   session_start();
 }
 
-
 if (isset($_POST['shtoLajmin'])) {
+    try {
+        $NewsCRUD->setTitulli($_POST['lajmiName']);
+        $NewsCRUD->setPershkrimi($_POST['pershkrimi']);
+        $NewsCRUD->setContent($_POST['content']);
+        $NewsCRUD->setKategorialajmit($_POST['kategoria']);
+        $_SESSION['fotolajmit'] = $_FILES['lajmiPhoto'];
+        $_SESSION['contentfoto'] = $_FILES['contentPhoto'];
 
-          $NewsCRUD->setTitulli($_POST['lajmiName']);
-          $NewsCRUD->setPershkrimi($_POST['pershkrimi']);
-          $NewsCRUD->setContent($_POST['content']);
-          $NewsCRUD->setKategorialajmit($_POST['kategoria']);
-          $_SESSION['fotolajmit'] = $_FILES['lajmiPhoto'];
-          $_SESSION['contentfoto'] = $_FILES['contentPhoto'];
-
-          $NewsCRUD->InsertLajmin();
-          echo $NewsCRUD->getTitulli();
-          echo $NewsCRUD->getPershkrimi();
-          echo $NewsCRUD->getContent();
-          echo $NewsCRUD->getFotolajmit();
-          echo $NewsCRUD->getContentfoto();
-          
-  
+        if($NewsCRUD->InsertLajmin()) {
+            echo "<script>alert('Lajmi u shtua me sukses!'); window.location.href='lajmet.php';</script>";
+        } else {
+            if(isset($_SESSION['error'])) {
+                echo "<script>alert('Error: " . $_SESSION['error'] . "');</script>";
+                unset($_SESSION['error']);
+            }
+        }
+    } catch(Exception $e) {
+        echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+    }
 }
 ?>
 <!DOCTYPE html>
