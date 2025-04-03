@@ -12,6 +12,7 @@ if (!isset($_SESSION)) {
     <title>Log In</title>
     <link rel="icon" href="../img/icon.png" type="image/icon">
     <link rel="stylesheet" href="../../css/login.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://kit.fontawesome.com/7be85ed243.js"></script>
 </head>
 <body class="login-body">

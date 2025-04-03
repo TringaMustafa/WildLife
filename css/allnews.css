@@ -5,12 +5,18 @@ body {
     background-color: #f0f0f0;
 }
 
-.container-lajmi {
-    width: 80%;
+.container {
+    width: 90%;
+    max-width: 1200px;
     margin: 40px auto;
+    padding: 20px;
+}
+
+.container-lajmi {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    gap: 30px;
+    margin-top: 40px;
 }
 
 .lajmi-each {
@@ -18,53 +24,71 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    transition: transform 0.3s ease;
 }
 
-.lajmi-each img {
+.lajmi-each:hover {
+    transform: translateY(-5px);
+}
+
+.lajmi-image {
     width: 100%;
     height: 200px;
+    overflow: hidden;
+}
+
+.lajmi-image img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
 .lajmi-text {
-    padding: 15px;
+    padding: 20px;
 }
 
-.lajmi-text h1 {
+.lajmi-text h2 {
     font-size: 20px;
-    margin-bottom: 10px;
+    margin: 0 0 15px 0;
+    color: #333;
 }
 
 .lajmi-text p {
     font-size: 16px;
     color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
 }
 
 .button {
-    background-color: #337ab7;
+    background-color: #E97200;
     color: white;
     border: none;
     padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .button:hover {
-    background-color: #286090;
+    background-color: #d66700;
 }
 
-.fshij {
-    background-color: #d9534f;
-}
-
-.fshij:hover {
-    background-color: #c9302c;
+.no-news {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    grid-column: 1 / -1;
+    padding: 40px;
 }
 
 @media (max-width: 768px) {
-    .container-lajmi {
+    .container {
         width: 95%;
+        padding: 10px;
+    }
+    
+    .container-lajmi {
+        grid-template-columns: 1fr;
     }
 }

@@ -40,6 +40,7 @@ if (isset($_POST['submit'])) {
     <title>Sign Up</title>
     <link rel="icon" href="../img/icon.png" type="image/icon">
     <link rel="stylesheet" href="../../css/signup.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://kit.fontawesome.com/7be85ed243.js"></script>
 </head>
 
