@@ -105,8 +105,7 @@ if (isset($_POST['shtoLajmin'])) {
 
 <body>
   <div class="formLajmi">
-    <form name="shtoLajmin" onsubmit="return validimiShtimiLajmit();" action='' method="POST"
-      enctype="multipart/form-data">
+    <form name="shtoLajmin" onsubmit="return validimiShtimiLajmit();" action='' method="POST" enctype="multipart/form-data">
       <?php
       if (isset($_SESSION['LajmiUinsertua'])) {
         echo '

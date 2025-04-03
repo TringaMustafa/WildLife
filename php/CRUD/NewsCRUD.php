@@ -103,17 +103,21 @@ Class NewsCRUD extends dbcon{
 
             // Sanitize file names and validate file types
             $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
             
             // Handle lajmi photo
             $lajmiPhoto = $_SESSION['fotolajmit'];
-            if (!in_array($lajmiPhoto['type'], $allowedTypes)) {
-                $_SESSION['fileNukSuportohet'] = true;
-                return false;
-            }
+            $lajmiExt = strtolower(pathinfo($lajmiPhoto['name'], PATHINFO_EXTENSION));
             
             // Handle content photo
             $contentPhoto = $_SESSION['contentfoto'];
-            if (!in_array($contentPhoto['type'], $allowedTypes)) {
+            $contentExt = strtolower(pathinfo($contentPhoto['name'], PATHINFO_EXTENSION));
+            
+            // Validate file types and extensions
+            if (!in_array($lajmiPhoto['type'], $allowedTypes) || 
+                !in_array($contentPhoto['type'], $allowedTypes) ||
+                !in_array($lajmiExt, $allowedExtensions) || 
+                !in_array($contentExt, $allowedExtensions)) {
                 $_SESSION['fileNukSuportohet'] = true;
                 return false;
             }
@@ -122,48 +126,48 @@ Class NewsCRUD extends dbcon{
             $lajmiPhotoName = uniqid() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "", $lajmiPhoto['name']);
             $contentPhotoName = uniqid() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "", $contentPhoto['name']);
 
-            // Move files
-            move_uploaded_file($lajmiPhoto['tmp_name'], "../../img/lajmet/" . $lajmiPhotoName);
-            move_uploaded_file($contentPhoto['tmp_name'], "../../img/lajmet/content/" . $contentPhotoName);
+            // Move files with proper paths
+            if (!move_uploaded_file($lajmiPhoto['tmp_name'], "../../img/lajmet/index/" . $lajmiPhotoName) ||
+                !move_uploaded_file($contentPhoto['tmp_name'], "../../img/lajmet/content/" . $contentPhotoName)) {
+                $_SESSION['problemNeBartje'] = true;
+                return false;
+            }
 
-            $sql = "INSERT INTO lajmet (titulli, pershkrimi, content, fotolajmit, contentfoto, kategorialajmit) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO lajmi (titulli, pershkrimi, content, fotolajmit, contentfoto, kategorialajmit) VALUES (?, ?, ?, ?, ?, ?)";
             $stm = $this->dbcon->prepare($sql);
             $stm->execute([$this->titulli, $this->pershkrimi, $this->content, $lajmiPhotoName, $contentPhotoName, $this->kategorialajmit]);
             
             $_SESSION['LajmiUinsertua'] = true;
             return true;
         } catch(Exception $e) {
-            return $e->getMessage();
+            $_SESSION['error'] = $e->getMessage();
+            return false;
         }
     }
     
       
       
      //Metoda e cila i shfaq te gjitha lajmet e regjistruara ne databaze
-    public function shfaqiLajmet(){
-      try {
-          $sql = "SELECT * FROM `lajmi`";
-          $stm = $this->dbcon->prepare($sql);
-          $stm->execute();
-
-          return $stm->fetchAll();
-    
-      } catch (Exception $e) {
-          return $e->getMessage();
-      }
-     }
+    public function shfaqiLajmet() {
+        try {
+            $sql = "SELECT * FROM lajmi ORDER BY datainsertimit DESC"; // Changed from 'lajmet' to 'lajmi'
+            $stm = $this->dbcon->prepare($sql);
+            $stm->execute();
+            return $stm->fetchAll();
+        } catch (Exception $e) {
+            return [];
+        }
+    }
 
      //Metoda e cila shfaq Lajmin sipas ID te marrur nga SESSIONI
-     public function shfaqLajminSipasID()
-    {
+     public function shfaqLajminSipasID() {
         try {
-            $sql = "SELECT * FROM lajmi WHERE lajmiID = ?";
+            $sql = "SELECT * FROM lajmi WHERE lajmiID = ?"; // Changed from 'lajmet' to 'lajmi'
             $stm = $this->dbcon->prepare($sql);
             $stm->execute([$this->lajmiID]);
-
             return $stm->fetch();
         } catch (Exception $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 

@@ -1,3 +1,17 @@
+<?php
+require_once('../adminFunksione/kontrolloAksesin.php');
+require_once('../db/dbcon.php');
+
+if (!isset($_SESSION)) {
+    session_start();
+}
+
+// Check for admin role
+if (!isset($_SESSION['roli']) || $_SESSION['roli'] !== 'admin') {
+    header("Location: ../faqet/login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,6 +72,8 @@
    <div> <a href="shtoLajmin.php">Shto Lajmin</a></div>
    <div> <a href="perdoruesit.php">Perdoruesit</a></div>
    <div> <a href="lajmet.php">Lajmet</a></div>
+   <div> <a href="messages.php">Messages</a></div>
+   <div> <a href="../funksione/logout.php">Logout</a></div>
 </div>
 </body>
 </html>
