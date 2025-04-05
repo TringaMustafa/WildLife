@@ -37,7 +37,6 @@ if (!isset($_SESSION)) {
                     <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
                     <input class="button" onclick="validimiLogIn();" type="submit" name="login">
                 </div>
-                
                 </form>
             </div>
         </div>
@@ -53,10 +52,11 @@ if(isset($_POST['login'])) {
     
     // Example validation logic
     $userExists = true; // Replace with actual validation logic
+    $accessLevel = 0; // Replace with actual access level from database
     
     if($userExists) {
         $_SESSION['username'] = $username;
-        $_SESSION['roli'] = 'user'; // Default role is user
+        $_SESSION['roli'] = $accessLevel == 1 ? 'admin' : ($accessLevel == 2 ? 'superadmin' : 'user');
         
         header("Location: index.php");
         exit();

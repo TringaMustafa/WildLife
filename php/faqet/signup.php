@@ -82,10 +82,9 @@ if (isset($_POST['submit'])) {
                 <input name="mbiemri" id="mbiemri" type="text" class="field" placeholder="Last Name">
                 <input name="numri" id="numri" type="number" class="field" placeholder="Your Number">
                 <input name="adresa" id="adress" type="text" class="field" placeholder="Your Address">
-                <input name="passwordi" id="passwordi" type="password"  class="field" placeholder="Password">
-                
-                <input type="submit" onclick="Valido()" name="submit"class="signup-button"value="Sign Up">
-                <a href="login.php">Log In.</a>
+                <input name="passwordi" id="passwordi" type="password" class="field" placeholder="Password">
+                <input type="submit" onclick="Valido()" name="submit" class="signup-button" value="Sign Up">
+                <a href="login.php">Already have an account? Log In</a>
                 </form>
        
     </section>
