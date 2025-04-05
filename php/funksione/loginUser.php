@@ -14,20 +14,19 @@ if(isset($_POST['login'])) {
 
     if($user) {
         if($password === $user['passwordi']) {
-            // Store complete user data in session
-            $_SESSION = [
-                'logged_in' => true,
-                'user_id' => $user['id'],
-                'nrleternjoftimit' => $user['nrleternjoftimit'],
-                'emri' => $user['emri'],
-                'mbiemri' => $user['mbiemri'],
-                'adresa' => $user['adresa'] ?? '',
-                'numri' => $user['numri'] ?? '',
-                'roli' => $user['roli'] ?? 'user',
-                'aksesi' => $user['aksesi'] ?? 0
-            ];
+            // Store user data in session
+            $_SESSION['logged_in'] = true;
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['nrleternjoftimit'] = $user['nrleternjoftimit'];
+            $_SESSION['emri'] = $user['emri'];
+            $_SESSION['mbiemri'] = $user['mbiemri'];
+            $_SESSION['adresa'] = $user['adresa'] ?? '';
+            $_SESSION['numri'] = $user['numri'] ?? '';
+            $_SESSION['roli'] = $user['roli'] ?? 'user';
+            $_SESSION['aksesi'] = $user['aksesi'] ?? 0;
 
-            if($user['roli'] === 'admin') {
+            // Redirect based on user role
+            if($user['aksesi'] >= 1) {  // Admin users have aksesi >= 1
                 header("Location: ../admin/dashboard.php");
             } else {
                 header("Location: ../faqet/profile.php");

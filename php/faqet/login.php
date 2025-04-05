@@ -33,10 +33,6 @@ if (!isset($_SESSION)) {
                 ?>
                 <input type="text" name="nrleternjoftimit" class="field" placeholder="Your Id" required>
                 <input type="password" name="passwordi" class="field" placeholder="Your Password" required>
-                <div class="role-selector">
-                    <input type="checkbox" name="isAdmin" id="isAdmin">
-                    <label for="isAdmin">Login as Admin</label>
-                </div>
                 <div class="reg">
                     <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
                     <input class="button" onclick="validimiLogIn();" type="submit" name="login">
@@ -60,13 +56,9 @@ if(isset($_POST['login'])) {
     
     if($userExists) {
         $_SESSION['username'] = $username;
-        $_SESSION['roli'] = isset($_POST['isAdmin']) ? 'admin' : 'user';
+        $_SESSION['roli'] = 'user'; // Default role is user
         
-        if($_SESSION['roli'] === 'admin') {
-            header("Location: ../admin/dashboard.php");
-        } else {
-            header("Location: index.php");
-        }
+        header("Location: index.php");
         exit();
     }
 }
